@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-app
+spec:
+  selector:
+    matchLabels:
+      app: first-go-app
+  template:
+    metadata:
+      labels:
+        app: first-go-app
+    spec:
+      containers:
+      - name: first-go-app
+        image: farzammohammadi/firstapp:latest
+        ports:
+        - containerPort: 80
