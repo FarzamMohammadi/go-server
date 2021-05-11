@@ -7,6 +7,9 @@ import (
 )
 
 func TestResponse(t *testing.T) {
+
+	go Main()
+
 	url := "http://localhost:8080/hello"
 
 	var client http.Client
