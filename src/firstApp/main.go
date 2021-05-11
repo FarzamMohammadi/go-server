@@ -5,14 +5,11 @@ import (
 	"net/http"
 )
 
-func main() {
+func Main() {
 
 	fmt.Print("App Started")
 	http.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("World"))
 	})
 	http.ListenAndServe(":8080", nil)
-
-	fmt.Print("End")
-
 }
