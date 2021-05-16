@@ -3,34 +3,33 @@ package main
 import (
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
 func TestResponse(t *testing.T) {
 
-	go Main()
+	expectedResult := "World"
+	server := httptest.NewServer(http.HandlerFunc(handler))
+	defer server.Close()
 
-	url := "http://localhost:8080/hello"
-
-	var client http.Client
-	resp, err := client.Get(url)
+	resp, err := http.Get(server.URL)
 
 	if err != nil {
-		t.Error("ERRPR: App Is Not Running!")
+		t.Fatal(err)
 	}
 
-	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
+	}
 
-	if resp.StatusCode == http.StatusOK {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			t.Error("ERROR: Problem Reading Respone")
-		}
+	result, err := ioutil.ReadAll(resp.Body)
 
-		bodyString := string(bodyBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-		if bodyString != "World" {
-			t.Error("ERROR: App Is Running But Did Not Receive Expcted Respone: 'World'")
-		}
+	if string(result) != expectedResult {
+		t.Fatal("Did Not Recieve Expected Byte: 'World'")
 	}
 }
