@@ -18,7 +18,6 @@ func TestResponse(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	if resp.StatusCode != 200 {
 		t.Fatalf("Received non-200 response: %d\n", resp.StatusCode)
 	}
@@ -28,7 +27,6 @@ func TestResponse(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	if string(result) != expectedResult {
 		t.Fatal("Did Not Recieve Expected Byte: 'World'")
 	}
