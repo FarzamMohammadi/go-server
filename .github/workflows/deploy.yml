@@ -56,7 +56,7 @@ jobs:
       run: |-
         docker build \
           --tag "$IMAGE" \
-          -f ./src/firstApp/
+          ./src/firstApp/Dockerfile
 
     # Push the Docker image to Google Container Registry
     - name: Publish
