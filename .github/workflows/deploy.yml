@@ -20,7 +20,7 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: go-app-cluster
   GKE_ZONE: us-central1-a
-  DEPLOYMENT_NAME: go-application-deployment
+  DEPLOYMENT_NAME: go-application-deployment2
   IMAGE: gcr.io/simple-go-project-313922/go-application
 
 jobs:
