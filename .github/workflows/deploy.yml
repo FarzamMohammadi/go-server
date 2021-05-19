@@ -55,8 +55,8 @@ jobs:
     - name: Build
       run: |-
         docker build \
-          --tag "$IMAGE" \
-          ./src/firstApp
+          -t "$IMAGE" \
+          ./src/firstApp/
 
     # Push the Docker image to Google Container Registry
     - name: Publish
@@ -66,9 +66,9 @@ jobs:
     # Set up kustomize
     - name: Create Deployment
       run: |-
-        kubectl create deployment "$DEPLOYMENT_NAME" --image="$IMAGE:latest"
+        kubectl create deployment "$DEPLOYMENT_NAME" --image="$IMAGE"
 
     # Deploy the Docker image to the GKE cluster
     - name: Expose Deployment
       run: |-
-        kubectl expose deployment "$DEPLOYMENT_NAME" --name=go-app3-service --type=LoadBalancer --port 80 --target-port 8082
+        kubectl expose deployment "$DEPLOYMENT_NAME" --name=go-app-service1 --type=LoadBalancer --port 80 --target-port 8080
