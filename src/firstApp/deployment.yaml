@@ -1,161 +1,46 @@
-apiVersion: apps/v1
-kind: Deployment
+---
+apiVersion: "v1"
+kind: "Namespace"
 metadata:
+  name: "hello-world"
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "go-application"
+  namespace: "hello-world"
   labels:
-    app: go-app
-  managedFields:
-    - apiVersion: apps/v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:annotations':
-            .: {}
-            'f:kubectl.kubernetes.io/last-applied-configuration': {}
-          'f:labels':
-            .: {}
-            'f:app': {}
-        'f:spec':
-          'f:progressDeadlineSeconds': {}
-          'f:replicas': {}
-          'f:revisionHistoryLimit': {}
-          'f:selector':
-            'f:matchLabels':
-              .: {}
-              'f:app': {}
-          'f:strategy':
-            'f:rollingUpdate':
-              .: {}
-              'f:maxSurge': {}
-              'f:maxUnavailable': {}
-            'f:type': {}
-          'f:template':
-            'f:metadata':
-              'f:labels':
-                .: {}
-                'f:app': {}
-            'f:spec':
-              'f:containers':
-                'k:{"name":"go-application-sha256-1"}':
-                  .: {}
-                  'f:image': {}
-                  'f:imagePullPolicy': {}
-                  'f:name': {}
-                  'f:resources': {}
-                  'f:terminationMessagePath': {}
-                  'f:terminationMessagePolicy': {}
-              'f:dnsPolicy': {}
-              'f:restartPolicy': {}
-              'f:schedulerName': {}
-              'f:securityContext': {}
-              'f:terminationGracePeriodSeconds': {}
-      manager: kubectl-client-side-apply
-      operation: Update
-      time: '2021-05-19T18:57:41Z'
-    - apiVersion: apps/v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:annotations':
-            'f:deployment.kubernetes.io/revision': {}
-        'f:status':
-          'f:availableReplicas': {}
-          'f:conditions':
-            .: {}
-            'k:{"type":"Available"}':
-              .: {}
-              'f:lastTransitionTime': {}
-              'f:lastUpdateTime': {}
-              'f:message': {}
-              'f:reason': {}
-              'f:status': {}
-              'f:type': {}
-            'k:{"type":"Progressing"}':
-              .: {}
-              'f:lastTransitionTime': {}
-              'f:lastUpdateTime': {}
-              'f:message': {}
-              'f:reason': {}
-              'f:status': {}
-              'f:type': {}
-          'f:observedGeneration': {}
-          'f:readyReplicas': {}
-          'f:replicas': {}
-          'f:updatedReplicas': {}
-      manager: kube-controller-manager
-      operation: Update
-      time: '2021-05-19T19:31:42Z'
-  name: go-application-deployment
-  namespace: go-app
+    app: "go-application"
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: go-app
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
+      app: "go-application"
   template:
     metadata:
       labels:
-        app: go-app
+        app: "go-application"
     spec:
       containers:
-        - image: >-
-            gcr.io/simple-go-project-313922/github.com/farzammohammadi/go_workspace
-          imagePullPolicy: IfNotPresent
-          name: go-application-sha256-1
+      - name: "go-application-sha256-1"
+        image: "gcr.io/simple-go-project-313922/go-application@sha256:259dc3a5e8273aedefb5eb78aac45f6a41cf0868ac9bbf513a9467b11728f03f"
 ---
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
 metadata:
+  name: "go-application-hpa-ri81"
+  namespace: "hello-world"
   labels:
-    app: go-app
-  managedFields:
-    - apiVersion: autoscaling/v2beta1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:annotations':
-            .: {}
-            'f:kubectl.kubernetes.io/last-applied-configuration': {}
-          'f:labels':
-            .: {}
-            'f:app': {}
-        'f:spec':
-          'f:maxReplicas': {}
-          'f:metrics': {}
-          'f:minReplicas': {}
-          'f:scaleTargetRef':
-            'f:apiVersion': {}
-            'f:kind': {}
-            'f:name': {}
-      manager: kubectl-client-side-apply
-      operation: Update
-      time: '2021-05-19T18:57:42Z'
-    - apiVersion: autoscaling/v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:annotations':
-            'f:autoscaling.alpha.kubernetes.io/conditions': {}
-        'f:status':
-          'f:currentReplicas': {}
-      manager: vpa-recommender
-      operation: Update
-      time: '2021-05-19T18:57:58Z'
-  name: go-application-deployment-hpa-utum
-  namespace: go-app
+    app: "go-application"
 spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "go-application"
+    apiVersion: "apps/v1"
+  minReplicas: 1
   maxReplicas: 5
   metrics:
-    - resource:
-        name: cpu
-        targetAverageUtilization: 80
-      type: Resource
-  minReplicas: 1
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: go-application-deployment
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
