@@ -4,10 +4,9 @@ metadata:
   name: go-app-service1
 spec:
   selector:
-    app: metrics
-    department: sales
-  type: LoadBalancer
+    app: go-app
+  type: NodePort
   ports:
-  - protocol: TCP
+  - NodePort: 30234
     port: 80
     targetPort: 8080
