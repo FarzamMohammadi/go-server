@@ -101,7 +101,7 @@ spec:
     spec:
       containers:
         - image: >-
-            gcr.io/simple-go-project-313922/github.com/farzammohammadi/go_workspace
+            gcr.io/simple-go-project-313922/go-application
           imagePullPolicy: Always
           name: go-application
 ---
