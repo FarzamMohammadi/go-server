@@ -1,46 +1,166 @@
----
-apiVersion: "v1"
-kind: "Namespace"
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: "hello-world"
----
-apiVersion: "apps/v1"
-kind: "Deployment"
-metadata:
-  name: "go-application"
-  namespace: "hello-world"
   labels:
-    app: "go-application"
+    app: go-application
+  managedFields:
+    - apiVersion: apps/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:labels':
+            .: {}
+            'f:app': {}
+        'f:spec':
+          'f:progressDeadlineSeconds': {}
+          'f:replicas': {}
+          'f:revisionHistoryLimit': {}
+          'f:selector':
+            'f:matchLabels':
+              .: {}
+              'f:app': {}
+          'f:strategy':
+            'f:rollingUpdate':
+              .: {}
+              'f:maxSurge': {}
+              'f:maxUnavailable': {}
+            'f:type': {}
+          'f:template':
+            'f:metadata':
+              'f:labels':
+                .: {}
+                'f:app': {}
+            'f:spec':
+              'f:containers':
+                'k:{"name":"go-application"}':
+                  .: {}
+                  'f:image': {}
+                  'f:imagePullPolicy': {}
+                  'f:name': {}
+                  'f:resources': {}
+                  'f:terminationMessagePath': {}
+                  'f:terminationMessagePolicy': {}
+              'f:dnsPolicy': {}
+              'f:restartPolicy': {}
+              'f:schedulerName': {}
+              'f:securityContext': {}
+              'f:terminationGracePeriodSeconds': {}
+      manager: kubectl-create
+      operation: Update
+      time: '2021-05-20T23:09:07Z'
+    - apiVersion: apps/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:deployment.kubernetes.io/revision': {}
+        'f:status':
+          'f:availableReplicas': {}
+          'f:conditions':
+            .: {}
+            'k:{"type":"Available"}':
+              .: {}
+              'f:lastTransitionTime': {}
+              'f:lastUpdateTime': {}
+              'f:message': {}
+              'f:reason': {}
+              'f:status': {}
+              'f:type': {}
+            'k:{"type":"Progressing"}':
+              .: {}
+              'f:lastTransitionTime': {}
+              'f:lastUpdateTime': {}
+              'f:message': {}
+              'f:reason': {}
+              'f:status': {}
+              'f:type': {}
+          'f:observedGeneration': {}
+          'f:readyReplicas': {}
+          'f:replicas': {}
+          'f:updatedReplicas': {}
+      manager: kube-controller-manager
+      operation: Update
+      time: '2021-05-20T23:11:41Z'
+  name: go-application
+  namespace: default
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: "go-application"
+      app: go-application
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
       labels:
-        app: "go-application"
+        app: go-application
     spec:
       containers:
-      - name: "go-application-sha256-1"
-        image: "gcr.io/simple-go-project-313922/go-application@sha256:259dc3a5e8273aedefb5eb78aac45f6a41cf0868ac9bbf513a9467b11728f03f"
+        - image: >-
+            gcr.io/simple-go-project-313922/github.com/farzammohammadi/go_workspace
+          imagePullPolicy: Always
+          name: go-application
 ---
-apiVersion: "autoscaling/v2beta1"
-kind: "HorizontalPodAutoscaler"
+apiVersion: v1
+kind: Service
 metadata:
-  name: "go-application-hpa-ri81"
-  namespace: "hello-world"
+  finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
   labels:
-    app: "go-application"
+    app: go-application
+  managedFields:
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:labels':
+            .: {}
+            'f:app': {}
+        'f:spec':
+          'f:externalTrafficPolicy': {}
+          'f:ports':
+            .: {}
+            'k:{"port":80,"protocol":"TCP"}':
+              .: {}
+              'f:port': {}
+              'f:protocol': {}
+              'f:targetPort': {}
+          'f:selector':
+            .: {}
+            'f:app': {}
+          'f:sessionAffinity': {}
+          'f:type': {}
+      manager: GoogleCloudConsole
+      operation: Update
+      time: '2021-05-20T23:13:15Z'
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:finalizers':
+            .: {}
+            'v:"service.kubernetes.io/load-balancer-cleanup"': {}
+        'f:status':
+          'f:loadBalancer':
+            'f:ingress': {}
+      manager: kube-controller-manager
+      operation: Update
+      time: '2021-05-20T23:13:54Z'
+  name: go-application-service
+  namespace: default
 spec:
-  scaleTargetRef:
-    kind: "Deployment"
-    name: "go-application"
-    apiVersion: "apps/v1"
-  minReplicas: 1
-  maxReplicas: 5
-  metrics:
-  - type: "Resource"
-    resource:
-      name: "cpu"
-      targetAverageUtilization: 80
+  clusterIP: 10.3.240.85
+  externalTrafficPolicy: Cluster
+  ports:
+    - nodePort: 30213
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: go-application
+  sessionAffinity: None
+  type: LoadBalancer
