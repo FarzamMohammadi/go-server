@@ -14,4 +14,4 @@ spec:
   selector:
     app: "go-app"
   type: "LoadBalancer"
-  loadBalancerIP: "34.134.66.32"
+  loadBalancerIP: ""
