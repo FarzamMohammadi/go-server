@@ -18,6 +18,6 @@ func main() {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("World"))
+	w.Write([]byte("World - testing"))
 	w.WriteHeader(http.StatusOK)
 }
