@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: "go-application-sha256-1"
-        image: "gcr.io/simple-go-project-313922/go-application@sha256:d94a5059cde46f45f4476504c049995fd16922ae34619574a0d46345b2ae7536"
+        image: "gcr.io/simple-go-project-313922/go-application@sha256:latest"
 ---
 apiVersion: "autoscaling/v2beta1"
 kind: "HorizontalPodAutoscaler"
