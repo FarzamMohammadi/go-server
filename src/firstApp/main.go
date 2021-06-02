@@ -4,21 +4,25 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
-	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-type Visit struct {
+type Visitors struct {
 	gorm.Model
-
+	ID   uint
 	Time string
 }
 
+var db *gorm.DB
+
+var err error
+
 func main() {
 
+	connectDB()
 	//Server
 	fmt.Println("App Started")
 	http.HandleFunc("/hello", handler)
@@ -27,26 +31,28 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
 
-	//Database
-	e := godotenv.Load() //Load .env file
-	if e != nil {
-		fmt.Print(e)
-	}
+func connectDB() {
 
-	db, err := gorm.Open("postgres", "host=db port=7567 user=postgres dbname=postgres sslmode=disable password=postgres")
+	dsn := "host=localhost user=postgres password=password dbname=db1 port=6666 sslmode=disable TimeZone=US/Eastern"
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
 	if err != nil {
 		panic("failed to connect database")
 	}
+	db.AutoMigrate(&Visitors{}) //Database migration
 
-	defer db.Close()
+}
 
+func addNewVisitor(db *gorm.DB) {
+	currentTime := time.Now()
+	db.Create(&Visitors{Time: currentTime.Format("2006-01-02 15:04:05")})
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("World"))
 	w.WriteHeader(http.StatusOK)
 
-	router := mux.NewRouter()
-	router.HandleFunc("/hello", AddTime).Methods("POST", "")
+	addNewVisitor(db)
 }
