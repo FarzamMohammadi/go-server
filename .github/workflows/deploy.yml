@@ -20,7 +20,7 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: go-app-cluster
   GKE_ZONE: us-central1-a
-  DEPLOYMENT_NAME: go-application
+  DEPLOYMENT_NAME: go-app
   IMAGE: go-application
 
 jobs:
