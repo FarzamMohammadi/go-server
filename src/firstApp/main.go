@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-
 	fmt.Println("App Started")
 	http.HandleFunc("/hello", handler)
 
