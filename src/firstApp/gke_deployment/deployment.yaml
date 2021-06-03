@@ -2,35 +2,35 @@
 apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
-  name: "go-application"
-  namespace: "default"
+  name: "go-app"
+  namespace: "go-app"
   labels:
-    app: "go-application"
+    app: "go-app"
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: "go-application"
+      app: "go-app"
   template:
     metadata:
       labels:
-        app: "go-application"
+        app: "go-app"
     spec:
       containers:
-      - name: "go-application-sha256-1"
+      - name: "go-app-sha256-1"
         image: "gcr.io/PROJECT_ID/IMAGE:GITHUB_SHA"
 ---
 apiVersion: "autoscaling/v2beta1"
 kind: "HorizontalPodAutoscaler"
 metadata:
-  name: "go-application-hpa-n2rg"
-  namespace: "default"
+  name: "go-app-hpa-u4zh"
+  namespace: "go-app"
   labels:
-    app: "go-application"
+    app: "go-app"
 spec:
   scaleTargetRef:
     kind: "Deployment"
-    name: "go-application"
+    name: "go-app"
     apiVersion: "apps/v1"
   minReplicas: 1
   maxReplicas: 5
