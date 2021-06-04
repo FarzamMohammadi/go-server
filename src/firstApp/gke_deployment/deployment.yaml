@@ -1,6 +1,6 @@
 ---
 apiVersion: "apps/v1"
-kind: "Deployment"
+kind: Deployment
 metadata:
   name: "go-app"
   namespace: "go-app"
@@ -16,8 +16,8 @@ spec:
       labels:
         app: "go-app"
     spec:
+      serviceAccountName: default
       containers:
-      serviceAccountName: postgres-service
       - name: "go-app-sha256-1"
         image: "gcr.io/PROJECT_ID/IMAGE:GITHUB_SHA"
         env:
@@ -37,16 +37,16 @@ spec:
                 name: cloudsql-db-credentials
                 key: dbname
       - name: cloud-sql-proxy
-          image: gcr.io/cloudsql-docker/gce-proxy:1.17
-          command:
-            - "/cloud_sql_proxy"
-            - "-instances=go-app-postgres=tcp:5432"
-          securityContext:
-            runAsNonRoot: true
-          resources:
-            requests:
-              memory: "2Gi"
-              cpu:    "1"
+        image: gcr.io/cloudsql-docker/gce-proxy:1.17
+        command:
+          - "/cloud_sql_proxy"
+          - "-instances=go-app-postgres=tcp:5432"
+        securityContext:
+          runAsNonRoot: true
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu:    "1"
 ---
 apiVersion: "autoscaling/v2beta1"
 kind: "HorizontalPodAutoscaler"

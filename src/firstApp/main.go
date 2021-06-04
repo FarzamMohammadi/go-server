@@ -50,7 +50,7 @@ func initConnection() {
 		dbUser    = mustGetenv("DB_USER")
 		dbPwd     = mustGetenv("DB_PASS")
 		dbTCPHost = "127.0.0.1"
-		dbPort    = mustGetenv("DB_PORT")
+		dbPort    = "5432"
 		dbName    = mustGetenv("DB_NAME")
 	)
 
