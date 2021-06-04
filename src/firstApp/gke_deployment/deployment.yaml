@@ -19,6 +19,34 @@ spec:
       containers:
       - name: "go-app-sha256-1"
         image: "gcr.io/PROJECT_ID/IMAGE:GITHUB_SHA"
+      serviceAccountName: postgres-service
+        env:
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-db-credentials
+                key: username
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-db-credentials
+                key: password
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-db-credentials
+                key: dbname
+      - name: cloud-sql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.17
+          command:
+            - "/cloud_sql_proxy"
+            - "-instances=go-app-postgres=tcp:5432"
+          securityContext:
+            runAsNonRoot: true
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu:    "1"
 ---
 apiVersion: "autoscaling/v2beta1"
 kind: "HorizontalPodAutoscaler"
@@ -39,3 +67,4 @@ spec:
     resource:
       name: "cpu"
       targetAverageUtilization: 80
+    
