@@ -16,7 +16,7 @@ spec:
       labels:
         app: "go-app"
     spec:
-      serviceAccountName: postgres-service
+      serviceAccountName: default
       containers:
       - name: "go-app-sha256-1"
         image: "gcr.io/PROJECT_ID/IMAGE:GITHUB_SHA"
