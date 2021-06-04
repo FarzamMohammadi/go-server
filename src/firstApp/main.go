@@ -1,11 +1,11 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"sql"
 	"time"
 
 	"gorm.io/gorm"
