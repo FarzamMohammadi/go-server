@@ -1,13 +1,13 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -25,7 +25,7 @@ type visitors struct {
 	Time string
 }
 
-var dbPool *sql.DB
+var dbPool *gorm.DB
 var err error
 
 func main() {
@@ -55,12 +55,11 @@ func initConnection() {
 	)
 
 	dbURI := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPwd, dbTCPHost, dbPort, dbName)
-	dbPool, err := sql.Open("postgres", dbURI)
+	dbPool, err := gorm.Open(postgres.Open(dbURI), &gorm.Config{})
 
 	if err != nil {
-		fmt.Errorf("sql.Open: %v", err)
+		panic("failed to connect database")
 	}
-
 	dbPool.AutoMigrate(&visitors{}) //Database migration
 
 }
