@@ -19,7 +19,7 @@ spec:
       serviceAccountName: postgres-service
       containers:
       - name: "go-app-sha256-1"
-        image: "gcr.io/PROJECT_ID/IMAGE:GITHUB_SHA"
+        image: "gcr.io/simple-go-app-315700/go-application@sha256:73cc8307793c159cfb17cc25a062cc5508b0fb9e71de1206a508dfb3a02764ae"
         env:
           - name: DB_USER
             valueFrom:
