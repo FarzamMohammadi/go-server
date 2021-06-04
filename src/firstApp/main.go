@@ -39,7 +39,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("World"))
 	w.WriteHeader(http.StatusOK)
 
-	addNewVisitor(dbPool)
+	if err != nil {
+		addNewVisitor(dbPool)
+	}
 }
 
 func initConnection() {
