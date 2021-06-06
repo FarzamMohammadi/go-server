@@ -30,8 +30,8 @@ var err error
 
 func main() {
 
-	initConnection()
 	fmt.Println("App Started")
+	initConnection()
 	http.HandleFunc("/hello", handler)
 }
 
