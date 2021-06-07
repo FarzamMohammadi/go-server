@@ -45,7 +45,7 @@ func initConnection() {
 		host   = "localhost"
 		port   = "5432"
 		dbName = mustGetenv("DB_NAME")
-	)
+  )
 
 	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s port=%s password=%s sslmode=disable", host, dbUser, dbName, port, dbPwd)
 
