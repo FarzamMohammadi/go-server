@@ -7,31 +7,24 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func mustGetenv(k string) string {
-	v := os.Getenv(k)
-	if v == "" {
-		log.Fatalf("Warning: %s environment variable not set.\n", k)
-	}
-	return v
-}
-
-type visitors struct {
+type Visits struct {
 	gorm.Model
 	ID   uint
 	Time string
 }
 
-var dbPool *gorm.DB
+var db *gorm.DB
 var err error
 
 func main() {
 
-	initConnection()
 	fmt.Println("App Started")
+	initConnection()
 	http.HandleFunc("/hello", handler)
 }
 
@@ -39,32 +32,44 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("World"))
 	w.WriteHeader(http.StatusOK)
 
-	if err != nil {
-		addNewVisitor(dbPool)
+	if db != nil {
+		addNewVisitor(db)
 	}
 }
 
 func initConnection() {
 
 	var (
-		dbUser    = mustGetenv("DB_USER")
-		dbPwd     = mustGetenv("DB_PASS")
-		dbTCPHost = "127.0.0.1"
-		dbPort    = "5432"
-		dbName    = mustGetenv("DB_NAME")
-	)
+		dbUser = mustGetenv("DB_USER")
+		dbPwd  = mustGetenv("DB_PASS")
+		host   = "localhost"
+		port   = "5432"
+		dbName = mustGetenv("DB_NAME")
+  )
 
-	dbURI := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPwd, dbTCPHost, dbPort, dbName)
-	dbPool, err := gorm.Open(postgres.Open(dbURI), &gorm.Config{})
+	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s port=%s password=%s sslmode=disable", host, dbUser, dbName, port, dbPwd)
+
+	db, err := gorm.Open(postgres.Open(dbURI), &gorm.Config{})
 
 	if err != nil {
-		panic("failed to connect database")
+		fmt.Println("DB Not Connected!: ", err)
+	} else {
+		fmt.Println("DB Connected!")
 	}
-	dbPool.AutoMigrate(&visitors{}) //Database migration
 
+	db.AutoMigrate(&Visits{})
 }
 
 func addNewVisitor(db *gorm.DB) {
 	currentTime := time.Now()
-	dbPool.Create(&visitors{Time: currentTime.Format("2006-01-02 15:04:05")})
+	db.Create(&Visits{Time: currentTime.Format("2006-01-02 15:04:05")})
+	fmt.Println("row added!")
+}
+
+func mustGetenv(k string) string {
+	v := os.Getenv(k)
+	if v == "" {
+		log.Fatalf("Warning: %s environment variable not set.\n", k)
+	}
+	return v
 }
