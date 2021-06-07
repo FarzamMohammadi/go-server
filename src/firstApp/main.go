@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -25,7 +26,7 @@ type visitors struct {
 	Time string
 }
 
-var dbPool *gorm.DB
+var db *gorm.DB
 var err error
 
 func main() {
@@ -39,32 +40,39 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("World"))
 	w.WriteHeader(http.StatusOK)
 
-	if err != nil {
-		addNewVisitor(dbPool)
+	if db != nil {
+		addNewVisitor(db)
 	}
 }
 
 func initConnection() {
 
 	var (
-		dbUser    = mustGetenv("DB_USER")
-		dbPwd     = mustGetenv("DB_PASS")
-		dbTCPHost = "127.0.0.1"
-		dbPort    = "5432"
-		dbName    = mustGetenv("DB_NAME")
+		dbUser                 = mustGetenv("DB_USER")
+		dbPwd                  = mustGetenv("DB_PASS")
+		instanceConnectionName = "simple-go-app-315700:us-central1:go-app-postgres"
+		dbName                 = mustGetenv("DB_NAME")
 	)
 
-	dbURI := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPwd, dbTCPHost, dbPort, dbName)
-	dbPool, err := gorm.Open(postgres.Open(dbURI), &gorm.Config{})
+	var dbURI string
+	dbURI = fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=disable", instanceConnectionName, dbUser, dbName, dbPwd)
+
+	db, err := gorm.Open(postgres.New(postgres.Config{
+		DriverName: "cloudsqlpostgres",
+		DSN:        dbURI,
+	}), &gorm.Config{})
 
 	if err != nil {
-		panic("failed to connect database")
+		fmt.Errorf("sql.Open: %v", err)
+	} else {
+		fmt.Println("Finally - db connected!")
 	}
-	dbPool.AutoMigrate(&visitors{}) //Database migration
-
+	currentTime := time.Now()
+	db.Create(&visitors{Time: currentTime.Format("2006-01-02 15:04:05")})
+	fmt.Println("row added!")
 }
 
 func addNewVisitor(db *gorm.DB) {
 	currentTime := time.Now()
-	dbPool.Create(&visitors{Time: currentTime.Format("2006-01-02 15:04:05")})
+	db.Create(&visitors{Time: currentTime.Format("2006-01-02 15:04:05")})
 }
