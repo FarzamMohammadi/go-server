@@ -18,26 +18,29 @@ type Visits struct {
 	Time string
 }
 
-var db *gorm.DB
-var err error
+type server struct {
+	db *gorm.DB
+
+}
 
 func main() {
 
+	s := server{}
 	fmt.Println("App Started")
-	initConnection()
-	http.HandleFunc("/hello", handler)
+	s.initConnection()
+	http.HandleFunc("/hello", s.handler)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func (s server) handler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("World"))
 	w.WriteHeader(http.StatusOK)
 
 	if db != nil {
-		addNewVisitor(db)
+		addNewVisitor(s.db)
 	}
 }
 
-func initConnection() {
+func (s server) initConnection() {
 
 	var (
 		dbUser = mustGetenv("DB_USER")
@@ -52,10 +55,12 @@ func initConnection() {
 	db, err := gorm.Open(postgres.Open(dbURI), &gorm.Config{})
 
 	if err != nil {
+		log.WithError(err).Fatal("db not connected")
 		fmt.Println("DB Not Connected!: ", err)
 	} else {
 		fmt.Println("DB Connected!")
 	}
+	s.db = db
 
 	db.AutoMigrate(&Visits{})
 }
