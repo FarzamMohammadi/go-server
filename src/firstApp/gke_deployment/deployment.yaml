@@ -19,7 +19,7 @@ spec:
       serviceAccountName: postgres-sa
       containers:
       - name: "go-app-sha256-1"
-        image: "gcr.io/simple-go-app-315700/go-app:22"
+        image: "gcr.io/simple-go-app-315700/simple-go-app:13"
         env:
           - name: DB_USER
             valueFrom:
