@@ -20,6 +20,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        cd ./src 
         go mod download
 
     - name: Build
