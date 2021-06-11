@@ -20,7 +20,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd ./src 
+        cd ./src/firstApp/
         go mod download
 
     - name: Build
