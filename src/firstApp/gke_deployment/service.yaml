@@ -3,7 +3,7 @@ apiVersion: "v1"
 kind: Service
 metadata:
   name: "go-app-service"
-  namespace: "go-app"
+  namespace: "go-app-namespace"
   labels:
     app: "go-app"
 spec:
