@@ -79,5 +79,5 @@ jobs:
         sed -i -e 's/IMAGE/'"$IMAGE"'/' ./src/firstApp/gke_deployment/deployment.yaml
         sed -i -e 's/GITHUB_SHA/'"$GITHUB_SHA"'/' ./src/firstApp/gke_deployment/deployment.yaml
         ./kustomize build ./src/firstApp/gke_deployment/ | kubectl apply -f -
-        kubectl rollout status deployment/$DEPLOYMENT_NAME
+        kubectl rollout status deployment/$DEPLOYMENT_NAME --namespace=go-app-namespace
         kubectl get services -o wide
