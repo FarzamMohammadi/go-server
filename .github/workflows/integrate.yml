@@ -22,7 +22,7 @@ jobs:
       run: |
         go get -u gorm.io/gorm
         go get -u gorm.io/driver/postgres
-        go get github.com/Sirupsen/logrus
+        go get -u github.com/Sirupsen/logrus
 
 
     - name: Build
