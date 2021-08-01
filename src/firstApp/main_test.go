@@ -31,3 +31,13 @@ func TestResponse(t *testing.T) {
 		t.Fatal("Did Not Recieve Expected Byte: 'World'")
 	}
 }
+
+func TestServer(t *testing.T) {
+	go main()
+	resp, err := http.Get("http://localhost:8080/")
+
+	if err != nil {
+		t.Fatalf("Could not create a request %v", err)
+	}
+	_ = resp
+}

@@ -26,10 +26,16 @@ func main() {
 	fmt.Println("App Started")
 	initConnection()
 	http.HandleFunc("/hello", handler)
-	err := http.ListenAndServe(":8080", nil)
+	ListenAndServe(":8080", nil)
+
+}
+
+func ListenAndServe(addr string, handler http.Handler) error {
+	err := http.ListenAndServe(addr, handler)
 	if err != nil {
 		log.WithError(err).Fatal("Could Not Connect To Server!")
 	}
+	return err
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -39,18 +45,27 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if DB != nil {
 		addNewVisitor()
 	} else {
-		log.Info("Problem Inserting Row - Row Was Not Added")
+		log.Info("Problem Inserting Row - Row Was Not Inserted")
 	}
 }
 
 func initConnection() {
 
+	// var (
+	// 	dbUser = mustGetenv("DB_USER")
+	// 	dbPwd  = mustGetenv("DB_PASS")
+	// 	host   = "localhost"
+	// 	port   = "5432"
+	// 	dbName = mustGetenv("DB_NAME")
+	// )
+
+	//Local DB
 	var (
-		dbUser = mustGetenv("DB_USER")
-		dbPwd  = mustGetenv("DB_PASS")
+		dbUser = "postgres"
+		dbPwd  = "password"
 		host   = "localhost"
-		port   = "5432"
-		dbName = mustGetenv("DB_NAME")
+		port   = "6666"
+		dbName = "db1"
 	)
 
 	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s port=%s password=%s sslmode=disable", host, dbUser, dbName, port, dbPwd)
